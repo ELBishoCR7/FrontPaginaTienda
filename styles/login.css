@@ -1,0 +1,109 @@
+:root {
+    --primary-normal: #EF6820;
+    --primary-light-active: #FF692E;
+    --primary-light-hover: #FF6B0E;
+    --primary-light: #FF982E;
+
+    --label-primary: #1F1F1F;
+    --label-secondary: #6B7586;
+    --label-tertiary: #FFFFFF;
+
+    --background-primary: #A7AEC1;
+    --background-secondary: #C5CED2;
+    --background-tertiary: #F5F5F5;
+    --background-quaternary: #FBFBFD;
+
+    --system-red: #EF5C5C;
+    --system-green: #00D261;
+    --system-blue: #007AFF;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: var(--background-tertiary);
+    color: var(--label-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    background: var(--background-quaternary);
+    padding: 24px;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    width: 320px;
+}
+
+h2 {
+    color: var(--label-primary);
+    text-align: center;
+    margin-top: 0;
+}
+
+label {
+    display: block;
+    margin-top: 12px;
+    font-size: 14px;
+    color: var(--label-secondary);
+}
+
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 8px;
+    margin-top: 6px;
+    box-sizing: border-box;
+    background: var(--background-tertiary);
+    border: 1px solid var(--background-secondary);
+    border-radius: 4px;
+    color: var(--label-primary);
+}
+
+button {
+    margin-top: 24px;
+    width: 100%;
+    padding: 10px;
+    background: var(--primary-normal);
+    color: var(--label-tertiary);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.2s ease-in-out;
+}
+
+button:hover {
+    background: var(--primary-light-hover);
+}
+
+button:active {
+    background: var(--primary-light-active);
+}
+
+.error {
+    color: var(--system-red);
+    margin-top: 8px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.success {
+    color: var(--system-green);
+    margin-top: 8px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.user-info {
+    margin-top: 12px;
+    font-size: 13px;
+    background: var(--background-secondary);
+    color: var(--label-primary);
+    padding: 12px;
+    border-radius: 4px;
+    line-height: 1.5;
+}

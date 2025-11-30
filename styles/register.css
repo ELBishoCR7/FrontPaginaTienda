@@ -1,0 +1,134 @@
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0f0f10;
+      color: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .contenedor {
+      width: 360px;
+      padding: 35px;
+      background-color: #151518;
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    p.subtitulo {
+      text-align: center;
+      color: #a0a0a0;
+      font-size: 13px;
+      margin-bottom: 25px;
+    }
+
+    .campo {
+      display: flex;
+      align-items: center;
+      position: relative;
+      margin-bottom: 18px;
+    }
+
+    .campo i {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #a0a0a0;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .campo input {
+      width: 100%;
+      padding: 12px 40px 12px 40px;
+      background: none;
+      border: 1.5px solid #3a3a3a;
+      border-radius: 10px;
+      color: #f2f2f2;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .campo input:focus {
+      border-color: #6b8cff;
+    }
+
+    .icono-ojo {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #a0a0a0;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .checkbox {
+      display: flex;
+      align-items: flex-start;
+      font-size: 12px;
+      color: #a0a0a0;
+      margin-top: 5px;
+      margin-bottom: 20px;
+    }
+
+    .checkbox input {
+      margin-right: 8px;
+      accent-color: #6b8cff;
+      margin-top: 3px;
+    }
+
+    .checkbox a {
+      color: #6b8cff;
+      text-decoration: none;
+    }
+
+    button {
+      width: 100%;
+      background-color: #6b8cff;
+      color: white;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: #5774e8;
+    }
+
+    .login-texto {
+      text-align: center;
+      font-size: 13px;
+      margin-top: 18px;
+      color: #a0a0a0;
+    }
+
+    .login-texto a {
+      color: #6b8cff;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .error {
+      color: #ff6961;
+      font-size: 12px;
+      display: none;
+      margin-top: -10px;
+      margin-bottom: 8px;
+    }
+  

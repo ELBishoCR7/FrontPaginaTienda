@@ -1,0 +1,214 @@
+/* home.css */
+body {
+    /* Quita o comenta estas líneas si las tienes: */
+    /* display: flex; */
+    /* justify-content: center; */
+    /* align-items: center; */
+
+    /* Usa esto en su lugar: */
+    display: block; 
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5; /* Color de fondo suave */
+    font-family: sans-serif;
+}
+
+/* Asegúrate que el header ocupe todo el ancho */
+header {
+    width: 100%;
+    background-color: #fff; /* O el color que prefieras */
+    padding: 20px 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Asegúrate que el main tenga espacio */
+main {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto; /* Esto centra el contenido en pantallas grandes */
+}
+
+/* Product Grid Styles */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    width: 100%;
+    min-height: 200px; /* Para ver si el bloque existe aunque esté vacío */
+    background-color: #b90000; /* Un color de fondo suave para ver el área */
+}
+/* Product Card Styles */
+.product-card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+    width: 100%;
+    max-width: 300px;
+}
+
+.product-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.product-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.product-info {
+    padding: 20px;
+}
+
+.product-name {
+    font-size: 1.4em;
+    margin: 0 0 10px;
+    color: #333;
+}
+
+.product-description {
+    font-size: 0.9em;
+    color: #666;
+    line-height: 1.5;
+    height: 60px; /* Limit description height */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.product-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.product-price {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #EF6820;
+}
+
+.product-rating {
+    font-size: 1em;
+    color: #FFC107;
+}
+
+/* Botón del carrito en el header */
+.cart-button {
+    background-color: #2ed573;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-right: 10px;
+    font-size: 1rem;
+}
+
+/* Fondo oscuro del modal */
+.cart-modal {
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5); /* Fondo semi-transparente */
+}
+
+/* El panel lateral blanco */
+.cart-content {
+    background-color: #fff;
+    width: 350px; /* Ancho del carrito */
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from { right: -350px; }
+    to { right: 0; }
+}
+
+.cart-header {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.close-btn {
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #aaa;
+}
+
+.close-btn:hover { color: black; }
+
+.cart-items-container {
+    flex: 1; /* Ocupa el espacio disponible */
+    overflow-y: auto; /* Scroll si hay muchos productos */
+    padding: 20px;
+}
+
+/* Item individual en el carrito */
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.item-info h4 { margin: 0; font-size: 0.9rem; }
+.item-info p { margin: 5px 0 0; color: #666; font-size: 0.85rem; }
+
+.item-controls button {
+    background: #ddd;
+    border: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.cart-footer {
+    padding: 20px;
+    border-top: 1px solid #ddd;
+    background-color: #f8f9fa;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.btn-checkout {
+    width: 100%;
+    padding: 12px;
+    background-color: #e67e22;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+.btn-checkout:hover { background-color: #d35400; }

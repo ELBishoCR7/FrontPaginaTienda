@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificación de OTP</title>
+    <link rel="stylesheet" href="../styles/otp.css">
+</head>
+<body>
+    <div class="contenedor">
+        <h2>Verificación de Cuenta</h2>
+        <p class="subtitulo">Ingresa el código de 6 dígitos que enviamos a tu correo.</p>
+
+        <form id="otpForm">
+            <div class="campo">
+                <input type="text" id="otp" name="otp" placeholder="Código OTP" required maxlength="6">
+            </div>
+
+            <div id="msg" class="error" role="alert" aria-live="polite" style="display:none;"></div>
+            <div id="success" class="success" style="display:none;"></div>
+
+            <button type="submit">Verificar</button>
+        </form>
+    </div>
+
+    <script src="../js/otp.js"></script>
+</body>
+</html>

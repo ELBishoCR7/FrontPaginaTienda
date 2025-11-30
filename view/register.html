@@ -1,0 +1,71 @@
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crea tu cuenta</title>
+
+  <!-- Fuente e íconos -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="../styles/register.css">
+
+</head>
+<body>
+  <div class="contenedor">
+    <h2>Crea tu cuenta</h2>
+    <p class="subtitulo">Únete a CoffeU y disfruta de nuestros beneficios</p>
+
+    <form id="registerForm">
+      <!-- Campo de correo -->
+      <div class="campo">
+        <i class="fa-solid fa-envelope"></i>
+        <input type="email" id="email" name="email" placeholder="Correo Electrónico" required>
+      </div>
+
+      <!-- Campo de usuario -->
+      <div class="campo">
+        <i class="fa-solid fa-user"></i>
+        <input type="text" id="nombre_usuario" name="nombre_usuario" placeholder="Nombre de Usuario" required>
+      </div>
+
+      <!-- Campo de teléfono -->
+      <div class="campo">
+        <i class="fa-solid fa-phone"></i>
+        <input type="tel" id="telefono_celular" name="telefono_celular" placeholder="Teléfono Celular" pattern="[0-9]{10}" required>
+      </div>
+
+      <!-- Contraseña -->
+      <div class="campo">
+        <i class="fa-solid fa-lock"></i>
+        <input type="password" id="password" name="password" placeholder="Contraseña" required>
+        <i class="fa-solid fa-eye icono-ojo" id="verPass1"></i>
+      </div>
+
+      <!-- Confirmar contraseña -->
+      <div class="campo">
+        <i class="fa-solid fa-lock"></i>
+        <input type="password" id="password2" name="password2" placeholder="Confirmar Contraseña" required>
+        <i class="fa-solid fa-eye icono-ojo" id="verPass2"></i>
+      </div>
+
+      <div class="error" id="errorContrasena" style="display:none;">⚠️ Las contraseñas no coinciden.</div>
+      <div id="msg" class="error" role="alert" aria-live="polite" style="display:none;"></div>
+      <div id="success" class="success" style="display:none;"></div>
+
+      <div class="checkbox">
+        <input type="checkbox" id="terminos" required>
+        <label for="terminos">
+          Al registrarte, aceptas nuestros <a href="#">Términos de Uso</a>.
+        </label>
+      </div>
+
+      <button type="submit">REGISTRARSE</button>
+    </form>
+
+    <p class="login-texto">¿Ya tienes una cuenta? <a href="login.html">Iniciar sesión</a></p>
+  </div>
+
+  <!-- Script externo -->
+  <script src="../js/register.js"></script>
+</body>
+</html>
