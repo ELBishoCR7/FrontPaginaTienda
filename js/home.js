@@ -1,189 +1,120 @@
-alert("¡El archivo JS está conectado!");
-
-
 document.addEventListener('DOMContentLoaded', () => {
-    // Referencias al DOM
-    const productList = document.getElementById('product-list');
-    const logoutButton = document.getElementById('logoutButton');
-    
-    // Elementos del Carrito
-    const cartBtn = document.getElementById('cart-btn');
-    const cartModal = document.getElementById('cart-modal');
-    const closeCartBtn = document.getElementById('close-cart');
-    const cartItemsContainer = document.getElementById('cart-items');
-    const cartTotalElement = document.getElementById('cart-total');
-    const cartCountElement = document.getElementById('cart-count');
+            const productList = document.getElementById('product-list');
+            const errorMsg = document.getElementById('error-msg');
+            const cartItemsContainer = document.getElementById('cart-items');
+            const cartTotalElement = document.getElementById('cart-total');
+            const cartCountElement = document.getElementById('cart-count');
+            const cartModal = document.getElementById('cart-modal');
 
-    let allProducts = []; // Aquí guardaremos los productos que traiga la API
-    let cart = JSON.parse(localStorage.getItem('shoppingCart')) || []; // Cargar del storage o iniciar vacío
+            let allProducts = [];
+            let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+            const formatter = new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN' });
 
-    // Token check
-    const token = localStorage.getItem('accessToken');
-    if (!token) {
-        window.location.href = 'login.html';
-        return;
-    }
+            // CONFIGURACIÓN API (Proxy para CORS)
+            const API_REAL = 'https://coffeu-16727117187.europe-west1.run.app/products/';
+            const PROXY_URL = 'https://corsproxy.io/?' + encodeURIComponent(API_REAL);
 
-    // Formateador de dinero
-    const formatter = new Intl.NumberFormat('es-PE', {
-        style: 'currency',
-        currency: 'PEN'
-    });
+            async function loadProducts() {
+                try {
+                    const response = await fetch(PROXY_URL);
+                    if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+                    const contentType = response.headers.get("content-type");
+                    if (contentType && contentType.includes("text/html")) throw new Error("Proxy Error: HTML Recibido");
 
-    // --- 1. CARGAR PRODUCTOS ---
-    fetch('http://127.0.0.1:8000/products/', {
-        headers: { 'Authorization': `Bearer ${token}` }
-    })
-    .then(res => {
-        if(res.status === 401) {
-            alert("Sesión expirada");
-            localStorage.clear();
-            window.location.href = 'login.html';
-        }
-        return res.json();
-    })
-    .then(data => {
-        // Guardamos los productos en la variable global para usarlos luego
-        allProducts = Array.isArray(data) ? data : data.results;
-        renderProducts(allProducts);
-        updateCartUI(); // Actualizar el numerito del carrito al cargar
-    })
-    .catch(err => console.error("Error cargando productos:", err));
+                    const data = await response.json();
+                    
+                    allProducts = data.map(p => ({
+                        id: p.id,
+                        name: p.name || 'Café',
+                        description: p.description || '',
+                        price: parseFloat(p.price) || 0,
+                        imageUrl: p.imageUrl || 'https://via.placeholder.com/300?text=Sin+Imagen'
+                    }));
 
-    // --- 2. RENDERIZAR PRODUCTOS ---
-    function renderProducts(products) {
-        if (!products || products.length === 0) {
-            productList.innerHTML = '<p>No hay productos.</p>';
-            return;
-        }
-        productList.innerHTML = '';
-        
-        products.forEach(product => {
-            const card = document.createElement('div');
-            card.classList.add('product-card');
-            
-            // NOTA: En el botón onclick pasamos solo el ID
-            card.innerHTML = `
-                <div class="image-container">
-                    <img src="${product.imageUrl || 'https://via.placeholder.com/150'}" class="product-image">
-                </div>
-                <div class="product-info">
-                    <h3>${product.name}</h3>
-                    <p class="product-price">${formatter.format(product.price)}</p>
-                    <button class="btn-add" onclick="addToCart(${product.id})">Agregar al Carrito</button>
-                </div>
-            `;
-            productList.appendChild(card);
-        });
-    }
+                    renderProducts(allProducts);
 
-    // --- 3. LÓGICA DEL CARRITO (Global) ---
-    
-    // Función para agregar (debe ser accesible desde el HTML)
-    window.addToCart = (id) => {
-        // Buscamos el producto completo en nuestra lista guardada
-        const product = allProducts.find(p => p.id === id);
-        
-        if (!product) return;
-
-        // Revisar si ya está en el carrito
-        const existingItem = cart.find(item => item.id === id);
-
-        if (existingItem) {
-            existingItem.quantity++;
-        } else {
-            cart.push({
-                id: product.id,
-                name: product.name,
-                price: parseFloat(product.price),
-                quantity: 1
-            });
-        }
-
-        saveCart();
-        updateCartUI();
-        // Opcional: Abrir el carrito automáticamente al agregar
-        cartModal.style.display = 'block';
-    };
-
-    // Función para eliminar o restar
-    window.changeQuantity = (id, change) => {
-        const itemIndex = cart.findIndex(item => item.id === id);
-        if (itemIndex > -1) {
-            cart[itemIndex].quantity += change;
-            
-            if (cart[itemIndex].quantity <= 0) {
-                cart.splice(itemIndex, 1); // Eliminar si llega a 0
+                } catch (error) {
+                    console.error("Error:", error);
+                    mostrarError(error);
+                }
+                updateCartUI();
             }
-        }
-        saveCart();
-        updateCartUI();
-    };
 
-    // Guardar en LocalStorage
-    function saveCart() {
-        localStorage.setItem('shoppingCart', JSON.stringify(cart));
-    }
+            function renderProducts(products) {
+                productList.innerHTML = '';
+                products.forEach(p => {
+                    productList.innerHTML += `
+                        <div class="product-card">
+                            <div class="image-container">
+                                <img src="${p.imageUrl}" class="product-image" alt="${p.name}" onerror="this.src='https://via.placeholder.com/300?text=Error+Carga'">
+                            </div>
+                            <div class="product-info">
+                                <h3>${p.name}</h3>
+                                <p style="color:#666; font-size:0.9em; flex-grow: 1;">${p.description}</p>
+                                <div class="price-tag">${formatter.format(p.price)}</div>
+                                <button class="btn-add" onclick="addToCart(${p.id})">Agregar al Carrito</button>
+                            </div>
+                        </div>`;
+                });
+            }
 
-    // Actualizar la vista del carrito (HTML)
-    function updateCartUI() {
-        // 1. Actualizar contador del header
-        const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-        cartCountElement.textContent = totalCount;
+            function mostrarError(error) {
+                errorMsg.style.display = 'block';
+                errorMsg.innerHTML = `<strong>Error de conexión:</strong> ${error.message}`;
+                allProducts = [{id:1, name:'Producto Demo', description:'Sin conexión', price:10.00, imageUrl:'https://via.placeholder.com/300'}];
+                renderProducts(allProducts);
+            }
 
-        // 2. Calcular total dinero
-        const totalMoney = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        cartTotalElement.textContent = formatter.format(totalMoney);
+            window.addToCart = (id) => {
+                const p = allProducts.find(x => x.id==id);
+                if(!p) return;
+                const item = cart.find(x => x.id==id);
+                if(item) item.quantity++; else cart.push({...p, quantity:1});
+                updateCartUI(); saveCart(); cartModal.style.display='block';
+            };
+            
+            window.changeQty = (id, change) => {
+                const item = cart.find(x => x.id==id);
+                if(item){
+                    item.quantity += change;
+                    if(item.quantity <= 0) cart = cart.filter(x => x.id != id);
+                    updateCartUI();
+                }
+            }
 
-        // 3. Dibujar items dentro del modal
-        cartItemsContainer.innerHTML = '';
-        
-        if (cart.length === 0) {
-            cartItemsContainer.innerHTML = '<p class="empty-cart">Tu carrito está vacío.</p>';
-            return;
-        }
+            function updateCartUI() {
+                const total = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+                cartTotalElement.innerText = formatter.format(total);
+                cartCountElement.innerText = cart.reduce((sum, i) => sum + i.quantity, 0);
+                
+                cartItemsContainer.innerHTML = '';
+                if(cart.length === 0) {
+                    cartItemsContainer.innerHTML = '<p style="text-align:center; color:#999; margin-top:30px;">Carrito vacío 🛒</p>';
+                    return;
+                }
 
-        cart.forEach(item => {
-            const itemEl = document.createElement('div');
-            itemEl.classList.add('cart-item');
-            itemEl.innerHTML = `
-                <div class="item-info">
-                    <h4>${item.name}</h4>
-                    <p>${formatter.format(item.price)} x ${item.quantity}</p>
-                </div>
-                <div class="item-controls">
-                    <button onclick="changeQuantity(${item.id}, -1)">-</button>
-                    <span>${item.quantity}</span>
-                    <button onclick="changeQuantity(${item.id}, 1)">+</button>
-                </div>
-            `;
-            cartItemsContainer.appendChild(itemEl);
+                cart.forEach(i => {
+                    cartItemsContainer.innerHTML += `
+                        <div class="cart-item">
+                            <div>
+                                <h4>${i.name}</h4>
+                                <span style="color:#666; font-size:0.9rem;">${formatter.format(i.price)} c/u</span>
+                            </div>
+                            <div class="qty-controls">
+                                 <button class="btn-qty" onclick="changeQty(${i.id}, -1)">-</button>
+                                 <span class="qty-text">${i.quantity}</span>
+                                 <button class="btn-qty" onclick="changeQty(${i.id}, 1)">+</button>
+                            </div>
+                        </div>`;
+                });
+                saveCart();
+            }
+            function saveCart() { localStorage.setItem('shoppingCart', JSON.stringify(cart)); }
+
+            document.getElementById('cart-btn').onclick = () => cartModal.style.display = 'block';
+            document.getElementById('close-cart').onclick = () => cartModal.style.display = 'none';
+            window.onclick = (e) => { if(e.target==cartModal) cartModal.style.display='none'; };
+            document.getElementById('logoutButton').onclick = () => { localStorage.removeItem('accessToken'); window.location.href='login.html'; };
+
+            loadProducts();
         });
-    }
-
-    // --- 4. EVENTOS DEL MODAL ---
-    
-    // Abrir modal
-    cartBtn.addEventListener('click', () => {
-        cartModal.style.display = 'block';
-        updateCartUI(); // Asegurarse que esté fresco
-    });
-
-    // Cerrar modal (X)
-    closeCartBtn.addEventListener('click', () => {
-        cartModal.style.display = 'none';
-    });
-
-    // Cerrar modal si clic afuera
-    window.addEventListener('click', (event) => {
-        if (event.target === cartModal) {
-            cartModal.style.display = 'none';
-        }
-    });
-
-    // Logout
-    logoutButton.addEventListener('click', () => {
-        localStorage.removeItem('accessToken');
-        window.location.href = 'login.html';
-    });
-});
