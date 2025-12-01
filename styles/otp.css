@@ -11,7 +11,6 @@
     --light-bg: #f8f9fa;
     --danger-color: #e74c3c;
     --success-color: #2ecc71;
-    
 }
 
 body { font-family: 'Segoe UI', sans-serif; background-color: var(--light-bg); margin: 0; color: var(--dark-text); }
