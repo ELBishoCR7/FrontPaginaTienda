@@ -7,6 +7,9 @@ const msg = document.getElementById('msg');
 const success = document.getElementById('success');
 const userContainer = document.getElementById('userContainer');
 const userInfo = document.getElementById('userInfo');
+// referencias para mensajes de error por campo
+const identificadorErrorEl = document.getElementById('identificadorError');
+const passwordErrorEl = document.getElementById('passwordError');
 
 function showError(text) {
 	msg.textContent = text;
@@ -21,12 +24,31 @@ function showSuccess(text) {
 
 form.addEventListener('submit', async (e) => {
 	e.preventDefault();
+	// limpiar mensajes
 	msg.style.display = 'none';
 	success.style.display = 'none';
 	userContainer.style.display = 'none';
+	identificadorErrorEl.style.display = 'none';
+	passwordErrorEl.style.display = 'none';
+	identificadorErrorEl.textContent = '';
+	passwordErrorEl.textContent = '';
 
 	const identificador = document.getElementById('identificador').value.trim();
 	const password = document.getElementById('password').value;
+
+	// validación cliente: mostrar mensaje pequeño por campo si falta
+	let hasError = false;
+	if (!identificador) {
+		identificadorErrorEl.textContent = 'Por favor ingresa usuario o correo.';
+		identificadorErrorEl.style.display = 'block';
+		hasError = true;
+	}
+	if (!password) {
+		passwordErrorEl.textContent = 'Por favor ingresa la contraseña.';
+		passwordErrorEl.style.display = 'block';
+		hasError = true;
+	}
+	if (hasError) return; // detener envío si falta información
 
 	try {
 		const resp = await fetch(API_URL, {
@@ -38,22 +60,30 @@ form.addEventListener('submit', async (e) => {
 		const data = await resp.json();
 
 		if (!resp.ok) {
-			// Mostrar mensaje de error del backend si existe
 			const err = data?.error || data?.detail || JSON.stringify(data);
-			showError(err);
+			const lower = String(err).toLowerCase();
+			// si backend indica recurso no encontrado, mostrar warning junto al campo identificador
+			if (resp.status === 404
+				|| lower.includes('no existe')
+				|| lower.includes('no encontrado')
+				|| lower.includes('not found')
+				|| (lower.includes('correo') && lower.includes('no'))) {
+				identificadorErrorEl.textContent = 'El Correo no Existe';
+				identificadorErrorEl.style.display = 'block';
+			} else {
+				showError(err);
+			}
 			return;
 		}
 
-		// Esperamos: { refresh_token, access_token, user: { id, nombre_usuario, email, telefono_celular } }
 		if (data.access_token && data.refresh_token) {
-			// Guardar tokens (puedes ajustar almacenamiento según tu seguridad)
 			localStorage.setItem('access_token', data.access_token);
 			localStorage.setItem('refresh_token', data.refresh_token);
 
 			showSuccess('Autenticado correctamente');
+			// redirigir tras autenticación correcta
 			window.location.href = 'home.html';
 
-			// Mostrar info del usuario
 			const u = data.user || {};
 			userInfo.innerHTML = `
 						<strong>${u.nombre_usuario || u.email || 'Usuario'}</strong><br/>
@@ -61,42 +91,12 @@ form.addEventListener('submit', async (e) => {
 						Teléfono: ${u.telefono_celular || '-'}<br/>
 						ID: ${u.id || '-'}
 			`;
-            userContainer.style.display = 'block'; // Show user info
+            userContainer.style.display = 'block';
 		} else {
             showError('Respuesta inesperada del servidor.');
         }
 	} catch (error) {
         console.error('Error en el login:', error);
         showError('No se pudo conectar al servidor. Intenta de nuevo.');
-    }
-});
-
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-
-    try {
-        const response = await fetch('/api/login/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email, password })
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            localStorage.setItem('accessToken', data.access);
-            localStorage.setItem('refreshToken', data.refresh);
-            window.location.href = '/dashboard.html';
-        } else {
-            alert(data.message || 'Error al iniciar sesión');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Error al conectar con el servidor');
     }
 });
