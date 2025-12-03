@@ -1,5 +1,5 @@
 // Configura aquí el endpoint de login de tu backend
-const API_URL = 'http://127.0.0.1:3000/accounts/login/'; // Cambia si tu endpoint es otro
+const API_URL = 'https://coffeu-16727117187.europe-west1.run.app/accounts/login/'; // Cambia si tu endpoint es otro
 
 
 const form = document.getElementById('loginForm');
