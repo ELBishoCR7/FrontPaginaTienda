@@ -1,4 +1,39 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // Cargar carrito desde localStorage
+  const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+  const orderItemsContainer = document.getElementById('order-items');
+  const orderTotalElement = document.getElementById('order-total');
+  
+  // Función para formatear moneda (Pesos Mexicanos)
+  const formatter = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' });
+  
+  // Cargar y mostrar items del carrito
+  if (cart.length > 0) {
+    let total = 0;
+    orderItemsContainer.innerHTML = '';
+    
+    cart.forEach(item => {
+      const itemTotal = item.price * item.quantity;
+      total += itemTotal;
+      
+      orderItemsContainer.innerHTML += `
+        <div class="summary-item">
+          <div>
+            <span class="item-name">${item.name}</span>
+            <span style="font-size: 12px; color: #999; display: block;">${item.quantity} × ${formatter.format(item.price)}</span>
+          </div>
+          <span class="item-price">${formatter.format(itemTotal)}</span>
+        </div>
+      `;
+    });
+    
+    // Mostrar total
+    orderTotalElement.textContent = formatter.format(total);
+  } else {
+    orderItemsContainer.innerHTML = '<p style="text-align: center; color: #999;">Tu carrito está vacío</p>';
+    orderTotalElement.textContent = '$0.00';
+  }
+
   // Inicialización de Stripe si está configurada
   const stripeMeta = document.querySelector('meta[name="stripe-pk"]');
   const stripePublicKey = stripeMeta ? stripeMeta.content : '';
