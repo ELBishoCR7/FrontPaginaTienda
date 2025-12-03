@@ -232,7 +232,6 @@
           <div class="form-actions">
             <button type="submit" id="pay-btn" class="btn-primary">
               <span>Pagar ahora</span>
-              <span class="btn-amount">$28.49</span>
             </button>
             <button type="button" id="cancel-btn" class="btn-secondary">Cancelar</button>
           </div>
@@ -244,22 +243,15 @@
         <div class="summary-box">
           <h2 class="summary-title">Resumen de tu pedido</h2>
 
-          <div class="summary-items">
-            <div class="summary-item">
-              <span class="item-name">Café Coffeu — Pack Premium</span>
-              <span class="item-price">$24.99</span>
-            </div>
-            <div class="summary-item">
-              <span class="item-name">Envío estándar</span>
-              <span class="item-price">$3.50</span>
-            </div>
+          <div class="summary-items" id="order-items">
+            <!-- Se llena dinámicamente desde JS -->
           </div>
 
           <div class="summary-divider"></div>
 
           <div class="summary-total">
             <span class="total-label">Total a pagar</span>
-            <span class="total-amount">$28.49</span>
+            <span class="total-amount" id="order-total">$0.00</span>
           </div>
 
           <div class="summary-security">

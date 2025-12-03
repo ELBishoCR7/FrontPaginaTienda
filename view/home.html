@@ -169,7 +169,7 @@
                     <span>Total:</span>
                     <span id="cart-total" class="total-price">$/ 0.00</span>
                 </div>
-                <button class="btn-pay">Pagar Ahora</button>
+                <button id="pay-btn" class="btn-pay">Pagar Ahora</button>
             </div>
         </div>
     </div>
@@ -185,7 +185,7 @@
 
             let allProducts = [];
             let cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
-            const formatter = new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN' });
+            const formatter = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' });
 
             // CONFIGURACIÓN API (Proxy para CORS)
             const API_REAL = 'https://coffeu-16727117187.europe-west1.run.app/products/';
@@ -292,6 +292,18 @@
             document.getElementById('close-cart').onclick = () => cartModal.style.display = 'none';
             window.onclick = (e) => { if(e.target==cartModal) cartModal.style.display='none'; };
             document.getElementById('logoutButton').onclick = () => { localStorage.removeItem('accessToken'); window.location.href='login.html'; };
+            
+            // Botón Pagar Ahora: redirige a pasarela-pago.html
+            document.getElementById('pay-btn').onclick = () => {
+                if(cart.length === 0) {
+                    alert('Tu carrito está vacío. Agrega productos antes de pagar.');
+                    return;
+                }
+                // Guardar carrito en localStorage para que pasarela-pago.html lo lea
+                localStorage.setItem('shoppingCart', JSON.stringify(cart));
+                // Redirigir a pasarela de pago
+                window.location.href = 'pasarela-pago.html';
+            };
 
             loadProducts();
         });
