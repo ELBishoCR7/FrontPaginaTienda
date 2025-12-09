@@ -1,116 +1,112 @@
-const API_URL = 'http://127.0.0.1:3000/accounts/registro/';
+document.addEventListener('DOMContentLoaded', () => {
+    // Referencias DOM
+    const registerForm = document.getElementById('registerForm');
+    const pass1 = document.getElementById('password');
+    const pass2 = document.getElementById('password2');
+    const errorPass = document.getElementById('errorContrasena');
+    const generalMsg = document.getElementById('generalMsg');
+    const btnRegister = document.getElementById('btnRegister');
 
-const form = document.getElementById('registerForm');
-const msg = document.getElementById('msg');
-const success = document.getElementById('success');
+    // Iconos de ver contraseña
+    const togglePass1 = document.getElementById('verPass1');
+    const togglePass2 = document.getElementById('verPass2');
 
-function showError(text) {
-    msg.innerHTML = text; // Use innerHTML to allow for lists
-    msg.style.display = 'block';
-    success.style.display = 'none';
-}
+    // URL API (Con Proxy)
+    const API_REGISTER = 'https://coffeu-16727117187.europe-west1.run.app/accounts/registro/';
+    const PROXY_URL = 'https://corsproxy.io/?' + encodeURIComponent(API_REGISTER);
 
-function showSuccess(text) {
-    success.textContent = text;
-    success.style.display = 'block';
-    msg.style.display = 'none';
-}
+    // 1. LÓGICA VER/OCULTAR CONTRASEÑA
+    togglePass1.addEventListener('click', () => toggleVisibility(pass1, togglePass1));
+    togglePass2.addEventListener('click', () => toggleVisibility(pass2, togglePass2));
 
-form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    msg.style.display = 'none';
-    success.style.display = 'none';
-
-    const nombre_usuario = document.getElementById('nombre_usuario').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const telefono_celular = document.getElementById('telefono_celular').value.trim();
-    const password = document.getElementById('password').value;
-    const password2 = document.getElementById('password2').value;
-
-    if (password !== password2) {
-        showError('Las contraseñas no coinciden.');
-        return;
+    function toggleVisibility(input, icon) {
+        const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+        input.setAttribute('type', type);
+        // Cambiar icono
+        icon.classList.toggle('fa-eye');
+        icon.classList.toggle('fa-eye-slash');
     }
 
-    const payload = {
-        nombre_usuario,
-        email,
-        telefono_celular,
-        password,
-        password2
-    };
+    // 2. VALIDACIÓN EN TIEMPO REAL
+    pass2.addEventListener('input', () => {
+        if (pass2.value && pass1.value !== pass2.value) {
+            errorPass.style.display = 'block';
+        } else {
+            errorPass.style.display = 'none';
+        }
+    });
 
-    try {
-        const resp = await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
+    // 3. ENVÍO DEL FORMULARIO
+    registerForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-        const data = await resp.json();
-
-        if (!resp.ok) {
-            let errorText = 'Ocurrió un error. Por favor, inténtalo de nuevo.';
-            if (data) {
-                const errors = Object.entries(data).map(([key, value]) => {
-                    return `<li>${key}: ${Array.isArray(value) ? value.join(', ') : value}</li>`;
-                }).join('');
-                errorText = `<ul>${errors}</ul>`;
-            }
-            showError(errorText);
+        // Validar contraseñas
+        if (pass1.value !== pass2.value) {
+            mostrarMensaje("Las contraseñas no coinciden.", "error");
             return;
         }
 
-        showSuccess('¡Registro exitoso! Revisa tu correo para activar tu cuenta. Serás redirigido al login en 5 segundos.');
-        form.reset();
-        
-        setTimeout(() => {
-            window.location.href = 'login.html';
-        }, 5000);
+        // Preparar datos
+        const formData = {
+            email: document.getElementById('email').value.trim(),
+            username: document.getElementById('nombre_usuario').value.trim(),
+            phone_number: document.getElementById('telefono_celular').value.trim(),
+            password: pass1.value
+        };
 
+        setLoading(true);
+        mostrarMensaje("", "hide");
 
-    } catch (error) {
-        console.error('Error en el registro:', error);
-        showError('No se pudo conectar al servidor. Intenta de nuevo.');
-    }
-});
+        try {
+            const response = await fetch(PROXY_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
 
-document.getElementById('registerForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const nombre = document.getElementById('nombre').value;
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const confirmPassword = document.getElementById('confirmPassword').value;
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                let errorMsg = "Error al registrarse.";
+                if (errorData.detail) errorMsg = errorData.detail;
+                else if (errorData.email) errorMsg = "El correo ya está registrado.";
+                else if (errorData.username) errorMsg = "El usuario ya existe.";
+                
+                throw new Error(errorMsg);
+            }
 
-    if (password !== confirmPassword) {
-        alert('Las contraseñas no coinciden');
-        return;
-    }
+            // ÉXITO
+            mostrarMensaje("¡Cuenta creada con éxito! Redirigiendo...", "success");
+            
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 2000);
 
-    try {
-        const response = await fetch('/api/registro/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                nombre,
-                email,
-                password
-            })
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            alert('Registro exitoso. Por favor revisa tu email para activar tu cuenta.');
-            window.location.href = '/login.html';
-        } else {
-            alert(data.message || 'Error en el registro');
+        } catch (error) {
+            console.error(error);
+            mostrarMensaje("❌ " + error.message, "error");
+        } finally {
+            setLoading(false);
         }
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Error al conectar con el servidor');
+    });
+
+    // Funciones Auxiliares
+    function mostrarMensaje(texto, tipo) {
+        if (tipo === "hide") {
+            generalMsg.style.display = 'none';
+            return;
+        }
+        generalMsg.textContent = texto;
+        generalMsg.className = `alert-box ${tipo === 'success' ? 'msg-success' : 'msg-error'}`;
+        generalMsg.style.display = 'block';
+    }
+
+    function setLoading(loading) {
+        if (loading) {
+            btnRegister.disabled = true;
+            btnRegister.textContent = "REGISTRANDO...";
+        } else {
+            btnRegister.disabled = false;
+            btnRegister.textContent = "REGISTRARSE";
+        }
     }
 });
