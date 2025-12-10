@@ -37,24 +37,29 @@ body {
         margin: 0;
         object-fit: contain;
     }
+    
+    /* BOTÓN DEL HEADER (corregido: usar selector .header .btn en lugar de .header Re) */
+.header .btn {
+    display: inline-block;
+    background: #fff;
+    color: #FF6B0E; /* mismo naranja del header */
+    text-decoration: none;
+    padding: 10px 16px;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    border: none;
+}
 
-    /* BOTÓN DEL HEADER
-       Estilo del botón de iniciar sesión/registro: fondo blanco, bordes redondeados
-       y cursor para indicar interactividad.
-    */
-    .header button {
-        width: auto;
-        background: #fff;
-        color: #FF6B0E; /* mismo naranja del header */
-        border: none;
-        padding: 10px 16px;
-        font-weight: 700;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 15px;
-    }
+/* estado hover/active para mejor feedback */
+.header .btn:hover,
+.header .btn:active {
+    background: rgba(255,255,255,0.95);
+    opacity: 0.95;
+}
 
-    /* BANNER
+/* BANNER
        Sección visual grande debajo del header. Mantiene la <img> en el HTML; la imagen
        ocupa todo el contenedor y añadimos un overlay oscuro con ::before para oscurecerla.
     */
